@@ -36,7 +36,7 @@ class TaskController extends Controller
         $task = Task::create([
             'task_name' => $request->task_name,
             'task_description' => $request->task_description,
-            'task_status' => 'pending'
+            'task_status' => 'Pending'
         ]);
 
         return response()->json(['message' => 'Task created successfully', 'data' => new TaskResource($task)], 200);
@@ -50,21 +50,13 @@ class TaskController extends Controller
 
     public function update(Request $request, Task $task)
     {
-        $validator = Validator::make($request->all(), [
-            'task_name' => 'required|string',
-            'task_description' => 'required|string',
-            'task_status' => 'required|string'
-        ]);
-
-        if($validator->fails()) {
-            return response()->json(['message' => 'All fields are required', 'error' => $validator->messages()], 422);
+        $task = Task::find($task->id);
+        if(!$task) {
+            return response()->json(['message' => 'Task not found'], 200);
         }
 
-        $task->update([
-            'task_name' => $request->task_name,
-            'task_description' => $request->task_description,
-            'task_status' => $request->task_status
-        ]);
+        $task->task_status = $request->task_status;
+        $task->save();
 
         return response()->json(['message' => 'Task updated successfully', 'data' => new TaskResource($task)], 200);
     }
