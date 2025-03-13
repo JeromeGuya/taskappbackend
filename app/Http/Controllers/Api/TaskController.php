@@ -24,18 +24,14 @@ class TaskController extends Controller
 
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        $fields = $request->validate([
             'task_name' => 'required|string',
             'task_description' => 'required|string'
         ]);
 
-        if($validator->fails()) {
-            return response()->json(['message' => 'All fields are required', 'error' => $validator->messages()], 422);
-        }
-
         $task = Task::create([
-            'task_name' => $request->task_name,
-            'task_description' => $request->task_description,
+            'task_name' => $fields['task_name'],
+            'task_description' => $fields['task_description'],
             'task_status' => 'Pending'
         ]);
 
