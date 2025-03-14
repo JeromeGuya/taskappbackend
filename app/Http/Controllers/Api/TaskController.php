@@ -62,4 +62,24 @@ class TaskController extends Controller
         $task->delete();
         return response()->json(['message' => 'Task deleted successfully'], 200);
     }
+
+    public function updateTask(Request $request, Task $task)
+    {
+        $request->validate([
+            'task_name' => 'required|string',
+            'task_description' => 'required|string',
+        ]);
+
+        $task = Task::find($task->id);
+        if(!$task) {
+            return response()->json(['message' => 'Task not found'], 200);
+        }
+
+        $task->task_name = $request->task_name;
+        $task->task_description = $request->task_description;
+        $task->save();
+
+        return response()->json(['message' => 'Task updated successfully', 'data' => new TaskResource($task)], 200);
+
+    }
 }
